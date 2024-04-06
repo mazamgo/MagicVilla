@@ -9,6 +9,7 @@ namespace MagicVilla_API.Modelos
         }
 
         public DbSet<Villa> Villas { get; set; }
+        public DbSet<NumeroVilla> NumeroVillas { get; set; }
 
         //Se va sobreescrbir el metodo para agregar registros en nuestra tabla villa.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
