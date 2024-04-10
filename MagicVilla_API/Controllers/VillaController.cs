@@ -57,7 +57,7 @@ namespace MagicVilla_API.Controllers
             return _response;           
         }
 
-        [HttpGet("id:int", Name = "GetVilla")]
+        [HttpGet("{id:int}", Name = "GetVilla")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -115,7 +115,7 @@ namespace MagicVilla_API.Controllers
                 //if (await _db.Villas.FirstOrDefaultAsync(v => v.Nombre.ToLower() == createDto.Nombre.ToLower()) != null)
                 if (await _villaRepo.Obtener(v => v.Nombre.ToLower() == createDto.Nombre.ToLower()) != null)
                 {
-                    ModelState.AddModelError("NombreExite", "La Villa con ese Nombre ya existe");
+                    ModelState.AddModelError("ErrorMessages", "La Villa con ese Nombre ya existe");
                     return BadRequest(ModelState);
 
                 }
@@ -157,7 +157,7 @@ namespace MagicVilla_API.Controllers
 
                 //Cuando se crea un nuevo registro se debe de volver el url del recurso creado, entonces se debe de utilizar el End Point httpGEt
                 //que nos retorna un solo registro.
-                return CreatedAtRoute("GetVilla", new { id = modelo.Id, _response });
+                return CreatedAtRoute("GetVilla", new { id = modelo.Id }, _response);
 
             }
             catch (Exception ex)
@@ -249,11 +249,11 @@ namespace MagicVilla_API.Controllers
             //_db.Villas.Update(modelo); //Update no es metodo asincrono.
             //await _db.SaveChangesAsync();
             await _villaRepo.Actualizar(modelo);
+			_response.statusCode = HttpStatusCode.NoContent;
 
-            //como no se va retornar nada se devuelve NoContent()
-            return NoContent();
+			return Ok(_response);
 
-        }
+		}
 
         [HttpPatch("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

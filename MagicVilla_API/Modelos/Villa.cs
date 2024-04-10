@@ -8,6 +8,7 @@ namespace MagicVilla_API.Modelos
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //para manejar que el id se incremente en uno en uno.
         public int Id { get; set; }
+        [Required]
         public string Nombre { get; set; }
         public string Detalle { get; set; }
         [Required]

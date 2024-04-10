@@ -43,7 +43,7 @@ namespace MagicVilla_API.Controllers
             {
                 _logger.LogInformation("Obtener los Numeros Villas");
               
-                IEnumerable<NumeroVilla> numeroVillaList = await _numeroRepo.ObtenerTodos();
+                IEnumerable<NumeroVilla> numeroVillaList = await _numeroRepo.ObtenerTodos(incluirPropiedades:"Villa");
 
                 _response.Resultado = _mapper.Map<IEnumerable<NumeroVillaDto>>(numeroVillaList);
                 _response.statusCode = System.Net.HttpStatusCode.OK;
@@ -58,8 +58,8 @@ namespace MagicVilla_API.Controllers
             }
             return _response;           
         }
-
-        [HttpGet("id:int", Name = "GetNumeroVilla")]
+     
+        [HttpGet("{id:int}", Name = "GetNumeroVilla")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -74,11 +74,11 @@ namespace MagicVilla_API.Controllers
                     return BadRequest(_response);
                 }
                
-                var numeroVilla = await _numeroRepo.Obtener(x => x.VillaNo == id);
+                var numeroVilla = await _numeroRepo.Obtener(x => x.VillaNo == id, incluirPropiedades: "Villa");
 
                 if (numeroVilla == null)
                 {
-                    _response.statusCode = System.Net.HttpStatusCode.NotFound;
+                   //_response.statusCode = System.Net.HttpStatusCode.NotFound;
                     _response.statusCode = HttpStatusCode.NotFound;
                     _response.IsExitoso = false;
                     return NotFound(_response); //404
@@ -115,13 +115,13 @@ namespace MagicVilla_API.Controllers
                
                 if (await _numeroRepo.Obtener(v => v.VillaNo == createDto.VillaNo) != null)
                 {
-                    ModelState.AddModelError("NombreExite", "El numero de Villa ya existe");
+                    ModelState.AddModelError("ErrorMessages", "El numero de Villa ya existe");
                     return BadRequest(ModelState);
                 }
 
                 if (await _villaRepo.Obtener(v => v.Id == createDto.VillaId) == null)
                 {
-                    ModelState.AddModelError("ClaveForanea", "El Id  de ls Villa no existe");
+                    ModelState.AddModelError("ErrorMessages", "El Id  de ls Villa no existe");
                     return BadRequest(ModelState);
                 }
 
@@ -138,10 +138,13 @@ namespace MagicVilla_API.Controllers
                 await _numeroRepo.Crear(modelo);
                 _response.Resultado = modelo;
                 _response.statusCode = System.Net.HttpStatusCode.Created;
-               
+
                 //Cuando se crea un nuevo registro se debe de volver el url del recurso creado, entonces se debe de utilizar el End Point httpGEt
                 //que nos retorna un solo registro.
-                return CreatedAtRoute("GetNumeroVilla", new { id = modelo.VillaNo, _response });
+                return CreatedAtRoute("GetNumeroVilla", new { id = modelo.VillaNo }, _response);
+                //return Ok(_response);
+                
+            
 
             }
             catch (Exception ex)
@@ -209,17 +212,20 @@ namespace MagicVilla_API.Controllers
 
             if (await _villaRepo.Obtener(v => v.Id == updateDto.VillaId) == null)
             {
-                ModelState.AddModelError("ClaveForanea", "El Id de la Villa No Existe");
+                ModelState.AddModelError("ErrorMessages", "El Id de la Villa No Existe");
                 return BadRequest(ModelState);
             }
 
             NumeroVilla modelo = _mapper.Map<NumeroVilla>(updateDto);
-
             
             await _numeroRepo.Actualizar(modelo);
 
+            _response.statusCode = HttpStatusCode.NoContent;
+
+            return Ok(_response);
+
             //como no se va retornar nada se devuelve NoContent()
-            return NoContent();
+            //return NoContent();
 
         }       
 
