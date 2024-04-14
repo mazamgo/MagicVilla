@@ -43,6 +43,21 @@ builder.Services.AddSwaggerGen(options => {
 			new List<string>()
 		}
 	});
+
+	options.SwaggerDoc("v1", new OpenApiInfo
+	{
+		Version = "v1",
+		Title = "Magic Villa v1",
+		Description = "Api para Villas"
+	});
+
+    options.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Version = "v2",
+        Title = "Magic Villa v2",
+        Description = "Api para Villas"
+    });
+
 });
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
@@ -80,6 +95,19 @@ builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 //builder.Services.AddSingleton --> se crean cuando se solicitan y luego cada vez que soliciten utilizara la misma instancia
 //builder.Services.AddTransient --> sec rean cada vez que se solicitan, se utilizan para servicios livianos y sin estados  
 
+builder.Services.AddApiVersioning(option =>
+{
+	//toma la version por defecto.
+	option.AssumeDefaultVersionWhenUnspecified = true;
+	option.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+	option.ReportApiVersions = true;
+});
+
+builder.Services.AddVersionedApiExplorer(options => 
+{
+	options.GroupNameFormat = "'v'VVV";
+	options.SubstituteApiVersionInUrl = true;
+});
 
 var app = builder.Build();
 
@@ -87,6 +115,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+	app.UseSwaggerUI(options => 
+	{
+		options.SwaggerEndpoint("/swagger/v1/swagger.json","Magic_VillaV1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "Magic_VillaV2");
+    });
     app.UseSwaggerUI();
 }
 
