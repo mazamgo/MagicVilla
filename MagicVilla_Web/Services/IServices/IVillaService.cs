@@ -6,6 +6,8 @@ namespace MagicVilla_Web.Services.IServices
     {
         Task<T> ObtenerTodos<T>(string token);
 
+        Task<T> ObtenerTodosPaginado<T>(string token, int pageNumber =1, int pageSize = 4);
+
         Task<T> Obtener<T>(int id, string token);
 
         Task<T> Crear<T>(VillaCreateDto dto, string token);

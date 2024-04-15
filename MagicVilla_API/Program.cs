@@ -3,6 +3,7 @@ using MagicVilla_API.Modelos;
 using MagicVilla_API.Repositorio;
 using MagicVilla_API.Repositorio.IRepositorio;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -13,7 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 //builder.Services.AddControllers();
-builder.Services.AddControllers().AddNewtonsoftJson();
+//builder.Services.AddControllers().AddNewtonsoftJson(); linea antes del agregar el perfil para el Catching.
+builder.Services.AddControllers(option =>
+{
+    option.CacheProfiles.Add("Default30",
+        new CacheProfile()
+        {
+			Duration = 30
+        });
+}).AddNewtonsoftJson();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -59,6 +69,9 @@ builder.Services.AddSwaggerGen(options => {
     });
 
 });
+
+builder.Services.AddResponseCaching();
+
 var key = builder.Configuration.GetValue<string>("ApiSettings:Secret");
 
 builder.Services.AddAuthentication(x =>
@@ -77,9 +90,6 @@ builder.Services.AddAuthentication(x =>
 			ValidateAudience = false
 		};
 	});
-
-
-
 
 builder.Services.AddDbContext<ApplicationDbContetxt>(option => {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
