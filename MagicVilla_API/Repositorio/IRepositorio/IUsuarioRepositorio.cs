@@ -12,7 +12,8 @@ namespace MagicVilla_API.Repositorio.IRepositorio
 		Task<LoginResponseDTO> Login (LoginRequestDTO loginRequestDTO);
 
 		//Metodo para el registro de nuevo usuario.
-		Task<Usuario> Registrar(RegistroRequestDTO registroRequestDTO);
+		//Task<Usuario> Registrar(RegistroRequestDTO registroRequestDTO);
+        Task<UsuarioDto> Registrar(RegistroRequestDTO registroRequestDTO);
 
-	}
+    }
 }

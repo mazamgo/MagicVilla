@@ -1,13 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace MagicVilla_API.Modelos
 {
-    public class ApplicationDbContetxt: DbContext
+    // public class ApplicationDbContetxt: DbContext  //antes de agregar identity
+    public class ApplicationDbContetxt: IdentityDbContext<UsuarioAplicacion>
     {
         public ApplicationDbContetxt(DbContextOptions<ApplicationDbContetxt> options) : base(options)
         {            
         }
-
+        public DbSet<UsuarioAplicacion> UsuariosAplicacion {  get; set; }
 		public DbSet<Usuario> Usuarios { get; set; }
 		public DbSet<Villa> Villas { get; set; }
         public DbSet<NumeroVilla> NumeroVillas { get; set; }        
@@ -15,6 +17,9 @@ namespace MagicVilla_API.Modelos
         //Se va sobreescrbir el metodo para agregar registros en nuestra tabla villa.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Para que todas la asociones de la UsuariosAplicacion con otras tablas no de problemas.
+            base.OnModelCreating(modelBuilder); 
+
             modelBuilder.Entity<Villa>().HasData(
                 new Villa()
                 {

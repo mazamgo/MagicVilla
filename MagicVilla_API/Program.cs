@@ -3,6 +3,7 @@ using MagicVilla_API.Modelos;
 using MagicVilla_API.Repositorio;
 using MagicVilla_API.Repositorio.IRepositorio;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -94,6 +95,9 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddDbContext<ApplicationDbContetxt>(option => {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+//Servicio seguridad: se van agregar las tablas de usuario,roles y se la queremos modificar, tenemos que hacer lo siguiente
+builder.Services.AddIdentity<UsuarioAplicacion,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContetxt>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 

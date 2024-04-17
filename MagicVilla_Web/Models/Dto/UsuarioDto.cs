@@ -2,11 +2,12 @@
 {
 	public class UsuarioDto
 	{
-		public int Id { get; set; }
+        //public int Id { get; set; }
+        public string Id { get; set; }
 		public string UserName { get; set; }
 		public string Nombres { get; set; }
 		public string Password { get; set; }
-		public string Rol { get; set; }
+		//public string Rol { get; set; }
 
 	}
 }
